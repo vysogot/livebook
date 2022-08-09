@@ -43,6 +43,7 @@ defmodule LivebookWeb.HomeLive do
         socket={@socket}
         current_page={Routes.home_path(@socket, :page)}
         current_user={@current_user}
+        saved_hubs={@saved_hubs}
       />
       <div class="grow overflow-y-auto">
         <.update_notification version={@new_version} instructions_url={@update_instructions_url} />

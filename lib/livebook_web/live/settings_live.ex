@@ -29,6 +29,7 @@ defmodule LivebookWeb.SettingsLive do
         socket={@socket}
         current_page={Routes.settings_path(@socket, :page)}
         current_user={@current_user}
+        saved_hubs={@saved_hubs}
       />
       <div class="grow px-6 py-8 overflow-y-auto">
         <div class="max-w-screen-md w-full mx-auto px-4 pb-8 space-y-20">
