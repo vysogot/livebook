@@ -50,6 +50,12 @@ if Mix.target() == :app do
       |> open()
     end
 
+    defp open("/new") do
+      %{LivebookWeb.Endpoint.access_struct_url() | path: "/new"}
+      |> to_string()
+      |> open()
+    end
+
     defp open(url) do
       Livebook.Utils.browser_open(url)
     end

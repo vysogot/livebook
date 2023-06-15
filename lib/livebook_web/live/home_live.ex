@@ -262,6 +262,11 @@ defmodule LivebookWeb.HomeLive do
     {:noreply, assign(socket, bulk_action: action)}
   end
 
+  def handle_params(_params, _url, socket)
+      when socket.assigns.live_action == :new_session do
+    {:noreply, create_session(socket)}
+  end
+
   def handle_params(_params, _url, socket), do: {:noreply, socket}
 
   @impl true

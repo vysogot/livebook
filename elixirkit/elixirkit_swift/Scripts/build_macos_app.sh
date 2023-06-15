@@ -24,7 +24,7 @@ cp $target_dir/$app_name $app_dir/Contents/MacOS/$app_name
 
 if [ -d Resources ]; then
   for i in Resources/*; do
-    cp $i $app_dir/Contents/Resources/
+    cp -r $i $app_dir/Contents/Resources/
   done
 fi
 
