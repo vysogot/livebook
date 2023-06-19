@@ -134,16 +134,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc
     func addNewNotebookShortcut() {
-        let url = URL(string: "shortcuts://shortcuts/c0fecf5a034642cbb2cf66dbf9f581ed")
+        let url = URL(string: "shortcuts://shortcuts/c0fecf5a034642cbb2cf66dbf9f581ed")!
         NSWorkspace.shared.open(url)
     }
 }
 
 struct NewNotebookIntent: AppIntent {
-    static var title: LocalizedStringResource = "New Notebook"
+    static var title: LocalizedStringResource = "Create New Livebook (v2)"
 
-    static var description =
-        IntentDescription("Create a new notebook.")
+    static var description = IntentDescription("Create a new notebook.")
+
+    static var openAppWhenRun = true
 
     func perform() async throws -> some IntentResult {
         ElixirKit.API.publish("open", "/new")
