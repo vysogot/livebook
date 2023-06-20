@@ -1,11 +1,11 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.5
 
 import PackageDescription
 
 let package = Package(
     name: "Livebook",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v11)
     ],
     dependencies: [
         .package(name: "ElixirKit", path: "../../../elixirkit/elixirkit_swift")
