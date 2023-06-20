@@ -1,4 +1,5 @@
 import AppKit
+import AppIntents
 import ElixirKit
 
 @main
@@ -15,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var logPath: String!
     private var launchedByOpenURL = false
-    private var initialURLs: [URL] = []
+    internal var initialURLs: [URL] = []
     private var url: String?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -72,6 +73,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSMenuItem(title: "Open", action: #selector(open), keyEquivalent: "o"),
             copyURLItem,
             NSMenuItem(title: "View Logs", action: #selector(viewLogs), keyEquivalent: "l"),
+            NSMenuItem(title: "Add \"New Notebook\" Shortcut", action: #selector(addNewNotebookShortcut), keyEquivalent: ""),
             NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ","),
             NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         ]
@@ -128,5 +130,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc
     func openSettings() {
         ElixirKit.API.publish("open", "/settings")
+    }
+
+    @objc
+    func addNewNotebookShortcut() {
+        let url = URL(string: "shortcuts://shortcuts/c0fecf5a034642cbb2cf66dbf9f581ed")!
+        NSWorkspace.shared.open(url)
+    }
+}
+
+struct NewNotebookIntent: AppIntent {
+    static var title: LocalizedStringResource = "Create New Livebook"
+
+    static var description = IntentDescription("Create a new notebook.")
+
+    static var openAppWhenRun = true
+
+    func perform() async throws -> some IntentResult {
+        ElixirKit.API.publish("open", "/new")
+
+        if ElixirKit.API.isRunning {
+            ElixirKit.API.publish("open", "/new")
+        }
+        else {
+            ElixirKit.API.initialUrls = [URL(string: "/new")!]
+        }
+
+        return .result(value: "ok")
     }
 }

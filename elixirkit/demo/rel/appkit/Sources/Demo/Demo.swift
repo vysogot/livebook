@@ -74,6 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc
     func pressMe() {
+        print("[client] button pressed!")
         ElixirKit.API.publish("log", "button pressed!")
     }
 }
