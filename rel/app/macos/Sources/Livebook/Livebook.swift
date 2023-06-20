@@ -1,6 +1,9 @@
 import AppKit
-import AppIntents
 import ElixirKit
+
+#if canImport(AppIntents)
+    import AppIntents
+#endif
 
 @main
 public struct Livebook {
@@ -73,10 +76,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSMenuItem(title: "Open", action: #selector(open), keyEquivalent: "o"),
             copyURLItem,
             NSMenuItem(title: "View Logs", action: #selector(viewLogs), keyEquivalent: "l"),
-            NSMenuItem(title: "Add \"New Notebook\" Shortcut", action: #selector(addNewNotebookShortcut), keyEquivalent: ""),
-            NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ","),
-            NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         ]
+
+        if #available(macOS 13, *) {
+            menu.items.append(
+                NSMenuItem(title: "Add \"New Notebook\" Shortcut", action: #selector(addNewNotebookShortcut), keyEquivalent: "")
+            )
+        }
+
+        menu.items.append(NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ","))
+        menu.items.append(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
 
         ElixirKit.API.addObserver(queue: .main) { (name, data) in
@@ -139,6 +148,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+@available(macOS 13, *)
 struct NewNotebookIntent: AppIntent {
     static var title: LocalizedStringResource = "Create New Livebook"
 
@@ -153,7 +163,7 @@ struct NewNotebookIntent: AppIntent {
             ElixirKit.API.publish("open", "/new")
         }
         else {
-            ElixirKit.API.initialUrls = [URL(string: "/new")!]
+            /* (NSApplication.shared.delegate).initialUrls = [URL(string: "/new")!] */
         }
 
         return .result(value: "ok")
