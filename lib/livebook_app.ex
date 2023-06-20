@@ -61,3 +61,13 @@ if Mix.target() == :app do
     end
   end
 end
+
+if Mix.target() == :app or Mix.env() == :test do
+  defmodule LivebookApp.Utils do
+    @moduledoc false
+
+    def url_for_open("") do
+      (LivebookWeb.Endpoint.access_url())
+    end
+  end
+end

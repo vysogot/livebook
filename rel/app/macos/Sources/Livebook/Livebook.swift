@@ -140,7 +140,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 struct NewNotebookIntent: AppIntent {
-    static var title: LocalizedStringResource = "Create New Livebook (v2)"
+    static var title: LocalizedStringResource = "Create New Livebook"
 
     static var description = IntentDescription("Create a new notebook.")
 

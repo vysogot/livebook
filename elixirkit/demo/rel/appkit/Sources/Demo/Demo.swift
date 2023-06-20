@@ -19,26 +19,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         button = NSButton(title: "Press me!", target: self, action: #selector(pressMe))
         button.isEnabled = false
 
+        NotificationCenter.default.addObserver(forName: ElixirKit.API.ready, object: nil, queue: .current) { n in
+            self.button.isEnabled = true
+            ElixirKit.API.publish("log", "Hello from AppKit!")
+
+        }
+
+        ElixirKit.API.addObserver(queue: .current) { (name, data) in
+            switch name {
+            case "log":
+                print("[client] " + data)
+            default:
+                fatalError("unknown event \(name)")
+            }
+        }
+
         ElixirKit.API.start(
             name: "demo",
-            readyHandler: {
-                // GUI updates need to happen on the main thread.
-                DispatchQueue.main.sync {
-                    self.button.isEnabled = true
-                }
-
-                ElixirKit.API.publish("log", "Hello from AppKit!")
-
-                ElixirKit.API.addObserver(queue: .main) { (name, data) in
-                    switch name {
-                    case "log":
-                        print("[client] " + data)
-                    default:
-                        fatalError("unknown event \(name)")
-                    }
-                }
-            },
             terminationHandler: { _ in
+            print("terminating...")
                 NSApp.terminate(nil)
             }
         )
@@ -69,11 +68,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        ElixirKit.API.stop()
+            print("applicationWillTerminate")
+        /* ElixirKit.API.stop() */
     }
 
     @objc
     func pressMe() {
+        print("[client] button pressed!")
         ElixirKit.API.publish("log", "button pressed!")
     }
 }

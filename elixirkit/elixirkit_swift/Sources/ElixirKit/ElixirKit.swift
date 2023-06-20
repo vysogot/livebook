@@ -5,6 +5,8 @@ public class API {
     static var process: Process?
     private static var release: Release?
 
+    public static let ready = NSNotification.Name("elixirkit.ready")
+
     static let didReceiveEvent = NSNotification.Name("elixirkit.event")
 
     public static var isRunning: Bool {
@@ -13,13 +15,14 @@ public class API {
         }
     }
 
+    internal static var isReady = false
+
     public static func start(
         name: String,
         logPath: String? = nil,
-        readyHandler: @escaping () -> Void,
         terminationHandler: ((Process) -> Void)? = nil) {
 
-        release = Release(name: name, logPath: logPath, readyHandler: readyHandler, terminationHandler: terminationHandler)
+        release = Release(name: name, logPath: logPath, terminationHandler: terminationHandler)
     }
 
     public static func publish(_ name: String, _ data: String) {
@@ -47,7 +50,6 @@ private class Release {
     let logger: Logger
     let listener: NWListener
     var connection: Connection?
-    let readyHandler: () -> Void
     let semaphore = DispatchSemaphore(value: 0)
 
     var isRunning: Bool {
@@ -59,10 +61,8 @@ private class Release {
     init(
         name: String,
         logPath: String? = nil,
-        readyHandler: @escaping () -> Void,
         terminationHandler: ((Process) -> Void)? = nil) {
 
-        self.readyHandler = readyHandler
         logger = Logger(logPath: logPath)
         listener = try! NWListener(using: .tcp, on: .any)
 
@@ -134,7 +134,8 @@ private class Release {
 
     private func didAccept(conn: NWConnection) {
         self.connection = Connection(conn: conn, logger: logger)
-        readyHandler()
+        API.isReady = true
+        NotificationCenter.default.post(name: API.ready, object: nil)
     }
 }
 

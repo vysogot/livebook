@@ -10,22 +10,20 @@ struct Demo {
             exit(signal)
         }
 
-        ElixirKit.API.start(
-            name: "demo",
-            readyHandler: {
-                ElixirKit.API.publish("log", "Hello from Swift!")
+        NotificationCenter.default.addObserver(forName: ElixirKit.API.ready, object: nil, queue: .main) { n in
+            ElixirKit.API.publish("log", "Hello from Swift!")
 
-                ElixirKit.API.addObserver(queue: .main) { (name, data) in
-                    switch name {
-                    case "log":
-                        print("[client] " + data)
-                    default:
-                        fatalError("unknown event \(name)")
-                    }
+            ElixirKit.API.addObserver(queue: .main) { (name, data) in
+                switch name {
+                case "log":
+                    print("[client] " + data)
+                default:
+                    fatalError("unknown event \(name)")
                 }
             }
-        )
+        }
 
+        ElixirKit.API.start(name: "demo")
         ElixirKit.API.waitUntilExit()
     }
 }
