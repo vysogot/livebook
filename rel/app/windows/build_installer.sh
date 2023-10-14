@@ -1,15 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 set -euo pipefail
 
-. `dirname $0`/env.sh
-
-rm -rf $target_dir
-dotnet publish Livebook.csproj $build_args
-
-(
-    cd ../../..
-    mix release app --overwrite --path=${target_dir}/rel
-)
+dotnet publish
 
 vc_redist_path="bin/vc_redist.x64.exe"
 if [ ! -f $vc_redist_path ]; then

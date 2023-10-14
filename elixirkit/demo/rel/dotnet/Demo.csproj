@@ -11,4 +11,10 @@
     <ProjectReference Include="../../../elixirkit_dotnet/ElixirKit.csproj" />
   </ItemGroup>
 
+  <Target Name="ReleaseMixProject" BeforeTargets="Build">
+    <Exec
+      Command="mix release --overwrite --path=$(MSBuildProjectDirectory)/$(OutDir)/rel"
+      EnvironmentVariables="MIX_ENV=prod"
+      WorkingDirectory="../.." />
+  </Target>
 </Project>

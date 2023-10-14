@@ -1,7 +1,7 @@
 #!/bin/sh
 set -euo pipefail
 
-. `dirname $0`/build.sh
+dotnet build
 
 # The installer (Installer.nsi) writes HKCR entries. Here we create HKCU entries which don't
 # require admin priveleges.
